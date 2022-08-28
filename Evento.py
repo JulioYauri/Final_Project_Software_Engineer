@@ -10,3 +10,4 @@ class Evento:
         self.hora_fin = None
         self.link = None
 
+    
