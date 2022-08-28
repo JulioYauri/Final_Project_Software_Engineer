@@ -105,6 +105,128 @@ class Lista_de_eventos:
 ```
 
 # 2.-Implementacion de practicas de codificacion legible
+## Function rules - Use descriptive names
+Cada función describe su funcionamiento, implementación en Evento.py
+```
+class Evento:
+    def __init__(self, _id, _nombre, _apellidos, _correo):
+        self.id          = _id
+        self.nombre      = _nombre
+        self.apellidos   = _apellidos
+        self.correo      = _correo
+    def get_nombre(self):
+        return self.nombre
+    def get_apellidos(self):
+        return self.apellidos
+    def get_correo(self):
+        return self.correo
+    def set_nombre(self, _nombre):
+        self.nombre = _nombre
+    def set_apellidos(self, _apellidos):
+        self.apellidos = _apellidos
+    def set_correo(self, _correo):
+        self.correo = _correo
+```
+## Source code structure - Don't break indentation
+La indentación en Python va más allá de la legibilidad, puede incluso traer errores de sintaxis. 
+## Source code structure - Place functions in a downward direction.
+Todas las funciones están definidas en un mismo nivel (indentación). 
+Implementación en Modelo Candidato/backend/models/escuela_model.py
+```
+class EscuelaModel:
+    def __init__(self):
+        self.mysql_pool = MySQLPool()
 
+    def get_escuela(self,idEscuela):
+        params = {'idEscuela' : idEscuela}
+        rv = self.mysql_pool.execute("SELECT * from escuela where idEscuela=%(idEscuela)s",params)
+        data = []
+        content = {}
+        for result in rv:
+            content = {'idEscuela': result[0], 'escuela':result[1], 'anio': result[2], 'numero_estudiantes': result[3]}
+            data.append(content)
+            content = {}
+        return data
 
+    def get_all_escuela(self):#Obtener todos los datos 
+        rv = self.mysql_pool.execute("SELECT * from escuela")  
+        data = []
+        content = {}
+        for result in rv:
+            content = {'idEscuela': result[0], 'escuela': result[1], 'anio': result[2], 'numero_estudiantes': result[3]}
+            data.append(content)
+            content = {}
+        return data
+
+    def create_escuela(self, idEscuela, escuela, anio, numero_estudiantes):#Se envian los parametros a traves del formato JSON 
+        params = {
+            'idEscuela' : idEscuela,
+            'escuela' : escuela,
+            'anio' : anio,
+            'numero_estudiantes' : numero_estudiantes
+        }
+        query = """insert into escuela (idEscuela, escuela,anio,numero_estudiantes)
+            values (%(idEscuela)s,%(escuela)s,%(anio)s,%(numero_estudiantes)s)"""
+        cursor = self.mysql_pool.execute(query, params, commit=True)
+
+        data = {'idEscuela': cursor.lastrowid, 'escuela': escuela, 'anio': anio, 'numero_estudiantes': numero_estudiantes}
+        return data
+
+    def delete_escuela(self, idEscuela):#Se envia el IdEscuela con la que se identifica para eliminar no se necesita mas
+        params = {'idEscuela': idEscuela}
+        query = """delete from escuela where idEscuela = %(idEscuela)s"""    
+        self.mysql_pool.execute(query, params, commit=True)  
+        data = {'result': 1}
+        return data
+```
+## Source code structure - Similar functions should be close
+Las funciones parecidas están implementadas cerca una de las otras. 
+Implementación en Evento.py, todos los getters y setters se encuentran agrupados. 
+```
+class Evento:
+    def __init__(self, _id, _nombre, _apellidos, _correo):
+        self.id          = _id
+        self.nombre      = _nombre
+        self.apellidos   = _apellidos
+        self.correo      = _correo
+    def get_nombre(self):
+        return self.nombre
+    def get_apellidos(self):
+        return self.apellidos
+    def get_correo(self):
+        return self.correo
+    def set_nombre(self, _nombre):
+        self.nombre = _nombre
+    def set_apellidos(self, _apellidos):
+        self.apellidos = _apellidos
+    def set_correo(self, _correo):
+        self.correo = _correo
+```
+## Objects and data structures - Prefer non-static methods to static methods.
+Hasta el momento no se utilizaron métodos static. 
+```
+class AsistenteModel:
+    def __init__(self):
+        self.mysql_pool = MySQLPool()
+
+    def get_asistente(self, id):
+        params = {'id': id}
+        rv = self.mysql_pool.execute("SELECT * from usuario INNER JOIN asistente ON where asistente.id%(id)s=usuario.id%(id)s", params)                
+        data = []
+        content = {}
+        for result in rv:
+            content = {'id': result[0], 'nombre': result[1], 'apellido': result[2], 'correo': result[3]}
+            data.append(content)
+            content = {}
+        return data
+    def get_all_asistentes(self):
+        rv = self.mysql_pool.execute("select * from usuario")
+        data = []
+        content = {}
+        
+
+    def create_asistente(self, id, nombre, apellido, correo):
+
+    def delete_asistente(self, id)
+```
 # 3.-Aplicacion de principios SOLID
