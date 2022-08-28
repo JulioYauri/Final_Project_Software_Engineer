@@ -68,9 +68,9 @@ class Evento:
 
 Constraints:
 
--Every single procedure and function checks the sanity of its arguments and refuses to continue when the arguments are unreasonable, jumping out of the function
--When calling out other functions, program functions only check for errors if they are in a position to react meaningully
--Error handling occurs at higher levels of function call chains, wherever it is meaningul to do so
+- Every single procedure and function checks the sanity of its arguments and refuses to continue when the arguments are unreasonable, jumping out of the function
+- When calling out other functions, program functions only check for errors if they are in a position to react meaningully
+- Error handling occurs at higher levels of function call chains, wherever it is meaningul to do so
 
 En la clase Lista_de_eventos.py, el manejo de errores se realize mediante asserts. 
 Cada función comprueba la validez de sus argumentos. 
