@@ -230,3 +230,108 @@ class AsistenteModel:
     def delete_asistente(self, id)
 ```
 # 3.-Aplicacion de principios SOLID
+
+## Single Responsibility Principle (SRP) 
+Una clase debe tener una única responsabilidad. Implementación en Modelo Candidato/backend/models/login_model.py
+La única responsabilid de LoginModel es manejar usuarios en la base de datos. 
+```
+class LoginModel:
+    def __init__(self): 
+        self.mysql_pool = MySQLPool()
+
+    def get_usuario(self, cui): #retorna el usuario dependiendo del CUI que se pasa a traves de json    
+        params = {'cui' : cui}      
+        rv = self.mysql_pool.execute("SELECT * from login where cui=%(cui)s", params)                
+        data = []
+        content = {}
+        for result in rv:
+            content = {'cui': result[0], 'contrasenia': result[1]}
+            data.append(content)
+            content = {}
+        return data
+
+    def get_all_usuario(self): #retorna todos los usuarios que existen en la tabla "login"
+        rv = self.mysql_pool.execute("SELECT * from login order by cui")  
+        data = []
+        content = {}
+        for result in rv:
+            content = {'cui': result[0], 'contrasenia': result[1]}
+            data.append(content)
+            content = {}
+        return data
+
+    def create_usuario(self, cui, contrasenia): #crear usuario a traves de json    
+        params = {
+            'cui' : cui,
+            'contrasenia' : contrasenia
+        }  
+        query = """insert into login(cui, contrasenia) 
+            values (%(cui)s, %(contrasenia)s)"""    
+        cursor = self.mysql_pool.execute(query, params, commit=True)   
+
+        data = {'cui': cui, 'contrasenia': contrasenia}
+        return data
+
+    def delete_usuario(self, cui):#borra usuario de la base de datos  
+        params = {'cui' : cui}      
+        query = """delete from login where cui = %(cui)s"""    
+        self.mysql_pool.execute(query, params, commit=True)   
+
+        data = {'result': 1}
+        return data
+```
+
+## Open-Close Principle (OCP) 
+La clase puede estar abierta a aumentar métodos, pero no modificarlos. 
+Implementación en Evento.py, se pueden agregar métodos a la clase Evento, pero no modificarlos, ya que son getters y setters. 
+```
+class Evento:
+    def __init__(self, _id, _nombre, _apellidos, _correo):
+        self.id          = _id
+        self.nombre      = _nombre
+        self.apellidos   = _apellidos
+        self.correo      = _correo
+    def get_nombre(self):
+        return self.nombre
+    def get_apellidos(self):
+        return self.apellidos
+    def get_correo(self):
+        return self.correo
+    def set_nombre(self, _nombre):
+        self.nombre = _nombre
+    def set_apellidos(self, _apellidos):
+        self.apellidos = _apellidos
+    def set_correo(self, _correo):
+        self.correo = _correo
+```
+
+## Interface Segregation Principle (ISP) 
+No se debe obligar a los clientes a depender de interfaces que no utilizan.
+Implementación en Lista_de_eventos.py, todos los métodos de la clase se utilizan en algún momento. 
+```
+class Lista_de_eventos:
+    def __init__(self):
+        self.id_evento = None
+    def setDetalles(evento, detalles_):
+        assert(type(detalles_) is str), "Los detalles deben estar contenidos en un string"
+        evento.detalles = detalles_
+    def setLink(evento, link_):
+        assert("www" in link_), "El link debe contener 'www'"
+        evento.link = link_
+    def setId(evento, id_): 
+        assert(type(id_) is int ), "El id debe ser un entero"
+        evento.id = id_
+    def setNombre(evento, nombre_):
+        assert(type(nombre_) is str), "El nombre debe ser un string"
+        evento.nombre = nombre_
+    def setFecha(evento, fecha_):
+        assert(type(fecha_) is str), "La fecha debe ser un string"
+        evento.fecha = fecha_
+    def setHoraInicio(evento, hora_inicio_):
+        assert(type(hora_inicio_) is str), "La hora de inicio debe ser un string"
+        evento.hora_inicio = hora_inicio_
+    def setHoraFin(evento, hora_fin_):
+        assert(type(hora_fin_) is str), "La hora de fin debe ser un string"
+        evento.hora_fin = hora_fin_
+```
+
