@@ -1,3 +1,4 @@
+# array
 from backend.models.connection_pool import MySQLPool
 class AsistenteModel:
     def __init__(self):
